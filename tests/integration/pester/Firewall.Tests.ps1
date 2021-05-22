@@ -1,6 +1,8 @@
-Describe 'The firewall' {
+BeforeAll {
     $ufwOutput = & sudo ufw status
+}
 
+Describe 'The firewall' {
     Context 'on the machine' {
         It 'should return a status' {
             $ufwOutput | Should Not Be $null

@@ -25,7 +25,8 @@ Describe 'The nomad application' {
             }
         }
 
-        $expectedContent = @'
+        It 'with a systemd service' {
+            $expectedContent = @'
 [Service]
 ExecStart = /usr/local/bin/nomad agent -config=/etc/nomad-conf.d
 Restart = on-failure
@@ -38,9 +39,8 @@ After = network-online.target
 [Install]
 WantedBy = multi-user.target
 '@
-        $serviceFileContent = Get-Content $serviceConfigurationPath | Out-String
-        $systemctlOutput = & systemctl status nomad
-        It 'with a systemd service' {
+            $serviceFileContent = Get-Content $serviceConfigurationPath | Out-String
+            $systemctlOutput = & systemctl status nomad
             $serviceFileContent | Should Be ($expectedContent -replace "`r", "")
 
             $systemctlOutput | Should Not Be $null
@@ -50,33 +50,35 @@ WantedBy = multi-user.target
         }
 
         It 'that is enabled' {
+            $systemctlOutput = & systemctl status nomad
             $systemctlOutput[1] | Should Match 'Loaded:\sloaded\s\(.*;\senabled;.*\)'
 
         }
 
         It 'and is running' {
+            $systemctlOutput = & systemctl status nomad
             $systemctlOutput[2] | Should Match 'Active:\sactive\s\(running\).*'
         }
     }
 
     Context 'can be contacted' {
-        $ifConfigResponse = & ifconfig eth0
-        $line = $ifConfigResponse[1].Trim()
-        # Expecting line to be:
-        #     inet addr:192.168.6.46  Bcast:192.168.6.255  Mask:255.255.255.0
-        $localIpAddress = $line.SubString(10, ($line.IndexOf(' ', 10) - 10))
-
-        $response = Invoke-WebRequest -Uri "http://$($localIpAddress):4646/v1/agent/self" -UseBasicParsing
-        $agentInformation = ConvertFrom-Json $response.Content
         It 'responds to HTTP calls' {
+            $ifConfigResponse = & ifconfig eth0
+            $line = $ifConfigResponse[1].Trim()
+            # Expecting line to be:
+            #     inet addr:192.168.6.46  Bcast:192.168.6.255  Mask:255.255.255.0
+            $localIpAddress = $line.SubString(10, ($line.IndexOf(' ', 10) - 10))
+
+            $response = Invoke-WebRequest -Uri "http://$($localIpAddress):4646/v1/agent/self" -UseBasicParsing
+            $agentInformation = ConvertFrom-Json $response.Content
             $response.StatusCode | Should Be 200
             $agentInformation | Should Not Be $null
         }
     }
 
     Context 'has linked to consul' {
-        $services = consul catalog services -tags
         It 'with the expected nomad services' {
+            $services = consul catalog services -tags
             $services[0] | Should Match 'consul'
             $services[1] | Should Match 'jobs\s*http,rpc,serf'
         }
