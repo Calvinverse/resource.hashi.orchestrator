@@ -7,7 +7,7 @@ describe 'resource_hashi_orchestrator::nomad' do
     let(:chef_run) { ChefSpec::SoloRunner.converge(described_recipe) }
 
     it 'creates the nomad config directory' do
-      expect(chef_run).to create_directory('/etc/nomad-conf.d')
+      expect(chef_run).to create_directory('/etc/nomad.conf.d')
     end
 
     it 'creates the nomad raft directory' do
@@ -40,7 +40,7 @@ describe 'resource_hashi_orchestrator::nomad' do
       }
     HCL
     it 'creates base.hcl in the nomad configuration directory' do
-      expect(chef_run).to create_file('/etc/nomad-conf.d/base.hcl')
+      expect(chef_run).to create_file('/etc/nomad.conf.d/base.hcl')
         .with_content(nomad_client_config_content)
     end
 
@@ -52,7 +52,7 @@ describe 'resource_hashi_orchestrator::nomad' do
       }
     CONF
     it 'creates nomad metrics file in the nomad configuration directory' do
-      expect(chef_run).to create_file('/etc/nomad-conf.d/metrics.hcl')
+      expect(chef_run).to create_file('/etc/nomad.conf.d/metrics.hcl')
         .with_content(nomad_metrics_content)
     end
   end
@@ -68,9 +68,10 @@ describe 'resource_hashi_orchestrator::nomad' do
         action: [:create],
         unit_after: %w[network-online.target],
         unit_description: 'Nomad System Scheduler',
-        unit_documentation: 'https://nomadproject.io/docs/index.html',
         unit_requires: %w[network-online.target],
-        service_restart: 'on-failure',
+        service_exec_start: '/usr/local/sbin/nomad agent -config=/etc/nomad.conf.d',
+        service_restart: 'always',
+        service_restart_sec: 5,
         service_user: 'nomad'
       )
     end
@@ -132,7 +133,7 @@ describe 'resource_hashi_orchestrator::nomad' do
         # This is the destination path on disk where the source template will render.
         # If the parent directories do not exist, Consul Template will attempt to
         # create them, unless create_dest_dirs is false.
-        destination = "/etc/nomad-conf.d/region.hcl"
+        destination = "/etc/nomad.conf.d/region.hcl"
         # This options tells Consul Template to create the parent directories of the
         # destination path if they do not exist. The default value is true.
         create_dest_dirs = false
@@ -235,7 +236,7 @@ describe 'resource_hashi_orchestrator::nomad' do
         # This is the destination path on disk where the source template will render.
         # If the parent directories do not exist, Consul Template will attempt to
         # create them, unless create_dest_dirs is false.
-        destination = "/etc/nomad-conf.d/secrets.hcl"
+        destination = "/etc/nomad.conf.d/secrets.hcl"
         # This options tells Consul Template to create the parent directories of the
         # destination path if they do not exist. The default value is true.
         create_dest_dirs = false
@@ -306,7 +307,7 @@ describe 'resource_hashi_orchestrator::nomad' do
         # This is the destination path on disk where the source template will render.
         # If the parent directories do not exist, Consul Template will attempt to
         # create them, unless create_dest_dirs is false.
-        destination = "/etc/nomad-conf.d/server.hcl"
+        destination = "/etc/nomad.conf.d/server.hcl"
         # This options tells Consul Template to create the parent directories of the
         # destination path if they do not exist. The default value is true.
         create_dest_dirs = false
