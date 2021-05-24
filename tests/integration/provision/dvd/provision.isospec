@@ -5,7 +5,7 @@
         <file src="${DirTestsIntegration}\provision\ubuntu\*.*" target="" />
 
         <file src="${DirTestsIntegration}\provision\shared\consul\*.*" target="consul" />
-        <file src="${DirTestsIntegration}\provision\shared\consul\server\*.*" target="consul\server" />
+        <file src="${DirTestsIntegration}\provision\shared\consul\client\*.*" target="consul\client" />
 
         <file src="${DirTestsIntegration}\provision\shared\unbound\*.*" target="unbound" />
 

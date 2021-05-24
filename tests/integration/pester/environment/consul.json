@@ -1,4 +1,6 @@
 {
+    "bootstrap_expect": 1,
+
     "datacenter": "test-integration",
     "domain": "integrationtest",
 
@@ -10,13 +12,13 @@
 
     "node_name": "test-integration_server",
 
-    "ports" : {
-        "dns" : 8650,
-        "http" : 8550,
-        "serf_lan" : 8351,
-        "serf_wan" : 8352,
-        "server" : 8350
+    "ports": {
+        "dns": 8650,
+        "http": 8550,
+        "serf_lan": 8351,
+        "serf_wan": 8352,
+        "server": 8350
     },
 
-    "server": false
+    "server": true
 }
