@@ -114,7 +114,7 @@ describe 'resource_hashi_orchestrator::nomad' do
 
     nomad_region_template_content = <<~CONF
       datacenter = "{{ keyOrDefault "config/services/consul/datacenter" "unknown" }}"
-      region = "{{ keyOrDefault "config/services/nomad/region" "unknown" }}"
+      region = "{{ keyOrDefault "config/services/orchestration/region" "unknown" }}"
     CONF
     it 'creates nomad region template file in the consul-template template directory' do
       expect(chef_run).to create_file('/etc/consul-template.d/templates/nomad_region.ctmpl')
@@ -184,7 +184,7 @@ describe 'resource_hashi_orchestrator::nomad' do
 
     nomad_secrets_template_content = <<~CONF
       server {
-      {{ with secret "secret/services/nomad/encrypt"}}
+      {{ with secret "secret/services/orchestration/encrypt"}}
         {{ if .Data.password }}
           encrypt = "{{ .Data.password }}"
         {{ end }}
@@ -196,27 +196,27 @@ describe 'resource_hashi_orchestrator::nomad' do
           # Setting the create_from_role option causes Nomad to create tokens for tasks
           # via the provided role. This allows the role to manage what policies are
           # allowed and disallowed for use by tasks.
-          create_from_role = "{{ keyOrDefault "config/services/nomad/vault/role" "nomad-cluster" }}"
+          create_from_role = "{{ keyOrDefault "config/services/orchestration/secrets/role" "nomad-cluster" }}"
           address = "http://{{ keyOrDefault "config/services/secrets/host" "unknown" }}.service.{{ keyOrDefault "config/services/consul/domain" "consul" }}:{{ keyOrDefault "config/services/secrets/port" "80" }}"
-          enabled = {{ keyOrDefault "config/services/nomad/vault/enabled" "true" }}
+          enabled = {{ keyOrDefault "config/services/orchestration/secrets/enabled" "true" }}
           key_file = "/var/certs/vault.key"
-          tls_skip_verify = {{ keyOrDefault "config/services/nomad/vault/tls/skip" "true" }}
+          tls_skip_verify = {{ keyOrDefault "config/services/orchestration/secrets/tls/skip" "true" }}
           # Embedding the token in the configuration is discouraged. Instead users
           # should set the VAULT_TOKEN environment variable when starting the Nomad
           # agent
-      {{ with secret "secret/services/nomad/token"}}
+      {{ with secret "secret/services/orchestration/token"}}
         {{ if .Data.password }}
           token = "{{ .Data.password }}"
         {{ end }}
       {{ end }}
       }
       tls {
-          http = {{ keyOrDefault "config/services/nomad/tls/http" "false" }}
-          rpc = {{ keyOrDefault "config/services/nomad/tls/rpc" "false" }}
+          http = {{ keyOrDefault "config/services/orchestration/tls/http" "false" }}
+          rpc = {{ keyOrDefault "config/services/orchestration/tls/rpc" "false" }}
           ca_file = ""
           cert_file = ""
           key_file = ""
-          verify_server_hostname = {{ keyOrDefault "config/services/nomad/tls/verify" "false" }}
+          verify_server_hostname = {{ keyOrDefault "config/services/orchestration/tls/verify" "false" }}
       }
     CONF
     it 'creates nomad secrets template file in the consul-template template directory' do
@@ -287,7 +287,7 @@ describe 'resource_hashi_orchestrator::nomad' do
 
     nomad_server_template_content = <<~CONF
       server {
-          bootstrap_expect = {{ keyOrDefault "config/services/nomad/bootstrap" "1" }}
+          bootstrap_expect = {{ keyOrDefault "config/services/orchestration/bootstrap" "1" }}
       }
     CONF
     it 'creates nomad server template file in the consul-template template directory' do
