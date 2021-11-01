@@ -1,0 +1,44 @@
+#cloud-config
+write_files:
+- content: |
+    {
+      "provision" : true
+    }
+  path: /run/cloud-init/run_provisioning.json
+- content: |
+    {
+      "datacenter": "test-integration",
+      "domain": "integrationtest"
+    }
+  path: /run/cloud-init/consul/consul_region.json
+- content: |
+    {
+      "encrypt": ""
+    }
+  path: /run/cloud-init/consul/consul_secrets.json
+- content: |
+    {
+      "bootstrap_expect": 1,
+      "server": true
+    }
+  path: /run/cloud-init/consul/server/consul_server_bootstrap.json
+- content: |
+    {
+    }
+  path: /run/cloud-init/consul/server/consul_server_location.json
+- content: |
+    #
+    # See unbound.conf(5) man page, version 1.6.3.
+    #
+    server:
+    local-zone: "integrationtest." nodefault
+    domain-insecure: "integrationtest"
+
+    stub-zone:
+    name: "integrationtest"
+    stub-addr: 127.0.0.1@8600
+
+    forward-zone:
+    name: "."
+    forward-addr: 192.168.6.1
+  path: /run/cloud-init/unbound/unbound_zones.conf
