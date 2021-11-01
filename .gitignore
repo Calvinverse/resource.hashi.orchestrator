@@ -1,0 +1,5 @@
+packages/
+build/
+berks/
+src/cookbooks/resource_hashi_orchestrator/.bundle/
+src/cookbooks/resource_hashi_orchestrator/Gemfile.lock
