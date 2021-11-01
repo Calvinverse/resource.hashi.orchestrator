@@ -51,6 +51,20 @@ Describe 'The firewall' {
         }
     }
 
+    Context 'should allow nomad' {
+        It 'on port 4646' {
+            ($ufwOutput | Where-Object { $_ -match '(4646/tcp)\s*(ALLOW)\s*(Anywhere)' } ) | Should Not Be $null
+        }
+
+        It 'on port 4647' {
+            ($ufwOutput | Where-Object { $_ -match '(4647/tcp)\s*(ALLOW)\s*(Anywhere)' } ) | Should Not Be $null
+        }
+
+        It 'on port 4648' {
+            ($ufwOutput | Where-Object { $_ -match '(4647/tcp)\s*(ALLOW)\s*(Anywhere)' } ) | Should Not Be $null
+        }
+    }
+
     Context 'should allow telegraf' {
         It 'on TCP port 8125' {
             ($ufwOutput | Where-Object {$_ -match '(8125/tcp)\s*(ALLOW)\s*(Anywhere)'} ) | Should -Not -Be $null
