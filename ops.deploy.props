@@ -540,6 +540,6 @@
     -->
 
     <PropertyGroup>
-        <OpsConfigurationVersion>0.2</OpsConfigurationVersion>
+        <OpsConfigurationVersion>1.0</OpsConfigurationVersion>
     </PropertyGroup>
 </Project>
